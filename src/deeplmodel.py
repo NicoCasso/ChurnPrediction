@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import shap
 
 
-
 data = pd.read_csv('data/WA_Fn-UseC_-Telco-Customer-Churn.csv')
 data['TotalCharges'] = data['TotalCharges'].replace(' ', 0)
 
