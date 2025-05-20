@@ -14,7 +14,7 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer, Binarizer
 
-
+# comment
 def create_preprocessor() -> Pipeline :
     preprocessor = make_pipeline(
         make_column_transformer(
