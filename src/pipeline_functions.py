@@ -1,6 +1,11 @@
 import pandas as pd
 from typing import Callable
 
+
+#______________________________________________________________________________
+#
+# region remplace les espaces par '0'
+#______________________________________________________________________________
 def exclude_spaces(column_name: str) -> Callable[[pd.DataFrame], pd.DataFrame]:
     
     def transform(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -10,11 +15,15 @@ def exclude_spaces(column_name: str) -> Callable[[pd.DataFrame], pd.DataFrame]:
     
     return transform
 
+
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer, Binarizer
 
-
+#______________________________________________________________________________
+#
+# region create_preprocessor
+#______________________________________________________________________________
 def create_preprocessor() -> Pipeline :
     preprocessor = make_pipeline(
         make_column_transformer(
@@ -51,6 +60,11 @@ def create_preprocessor() -> Pipeline :
 
 import tensorflow as tf
 
+
+#______________________________________________________________________________
+#
+# region metrique spécifique
+#______________________________________________________________________________
 class F1Score(tf.keras.metrics.Metric):
     def __init__(self, name='f1_score', **kwargs):
         super().__init__(name=name, **kwargs)
@@ -80,10 +94,14 @@ class F1Score(tf.keras.metrics.Metric):
         self.fp.assign(0)
         self.fn.assign(0)
 
-def build_nn_model(X_train:pd.DataFrame) -> tf.keras.Model :
+#______________________________________________________________________________
+#
+# region construction du modèle
+#______________________________________________________________________________
+def build_nn_model(input_shape : tuple[int, int]) -> tf.keras.Model :
     
     model = tf.keras.Sequential([
-        tf.keras.layers.Input(shape=(X_train.shape[1],)),
+        tf.keras.layers.Input(shape=input_shape),
         tf.keras.layers.Dense(64, activation='sigmoid'),
         tf.keras.layers.Dense(32, activation='sigmoid'),
         tf.keras.layers.Dense(16, activation='sigmoid'),
@@ -101,8 +119,6 @@ def build_nn_model(X_train:pd.DataFrame) -> tf.keras.Model :
             #F1Score()  # Custom metric
         ]
     )
-
-    model.summary()
 
     return model
 
