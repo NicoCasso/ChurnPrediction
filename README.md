@@ -128,7 +128,7 @@ Ce projet a été réalisé dans le cadre d'une mission pour **TelcoNova**, opé
 
 ### Installation
 
-```bash
+bash
 git clone https://github.com/<votre-org>/telco-churn-prediction.git
 cd telco-churn-prediction
 python -m venv venv
