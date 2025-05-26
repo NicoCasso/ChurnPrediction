@@ -1,5 +1,5 @@
 
 from .pipeline_functions import *
-from .truc import *
+from .another_module import *
 
-__all__ = ["pipeline_functions", "truc"]
+__all__ = ["pipeline_functions", "another_module"]

@@ -73,7 +73,7 @@ import tensorflow as tf
 # region metrique spécifique
 #______________________________________________________________________________
 class F1Score(tf.keras.metrics.Metric):
-    def __init__(self, name='f1_score', **kwargs):
+    def __init__(self, name='f1-score', **kwargs):
         super().__init__(name=name, **kwargs)
         self.tp = self.add_weight(name='tp', initializer='zeros')
         self.fp = self.add_weight(name='fp', initializer='zeros')
@@ -120,10 +120,11 @@ def build_nn_model(input_shape : tuple[int, int]) -> tf.keras.Model :
         loss='binary_crossentropy',
         metrics=[
             tf.keras.metrics.BinaryAccuracy(name='accuracy'),
-            tf.keras.metrics.Precision(name='precision'),
-            #tf.keras.metrics.Recall(name='recall'),
+            #tf.keras.metrics.Precision(name='precision'),
+            tf.keras.metrics.Recall(name='recall'),
+            F1Score(),  # Custom metric
             tf.keras.metrics.AUC(name='roc_auc')
-            #F1Score()  # Custom metric
+      
         ]
     )
 
