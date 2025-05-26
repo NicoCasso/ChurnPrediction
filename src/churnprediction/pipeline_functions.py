@@ -1,24 +1,31 @@
 import pandas as pd
+import numpy as np
 from typing import Callable
-
 
 #______________________________________________________________________________
 #
 # region remplace les espaces par '0'
 #______________________________________________________________________________
-def exclude_spaces(column_name: str) -> Callable[[pd.DataFrame], pd.DataFrame]:
-    
-    def transform(dataframe: pd.DataFrame) -> pd.DataFrame:
-        new_dataframe = dataframe.copy()
-        new_dataframe[column_name] = new_dataframe[column_name].replace(' ', 0).astype('float64')
-        return new_dataframe
-    
-    return transform
+def exclude_spaces_from_totalCharges(dataframe : pd.DataFrame) -> pd.DataFrame:
 
+    new_dataframe = dataframe.copy()
+    new_dataframe['TotalCharges'] = (
+        new_dataframe['TotalCharges'].astype(str).str.replace(' ', '', regex=False)
+        .replace('', '0').astype(float)
+    )
+    return new_dataframe
+    
 
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer, Binarizer
+
+# Fonctions nommées (au lieu des lambda)
+def encode_male(x):
+    return (x == 'Male').astype(int)
+
+def encode_yes(x):
+    return (x == 'Yes').astype(int)
 
 #______________________________________________________________________________
 #
@@ -27,12 +34,12 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransfo
 def create_preprocessor() -> Pipeline :
     preprocessor = make_pipeline(
         make_column_transformer(
-            (FunctionTransformer(lambda x: (x == 'Male').astype(int), validate=False), ["gender"]), # 2 values: Female, Male
+            (FunctionTransformer(encode_male, validate=False), ["gender"]), # 2 values: Female, Male
             (Binarizer(), ["SeniorCitizen"]), #, 2 int64 values: 0, 1
-            (FunctionTransformer(lambda x: (x == 'Yes').astype(int), validate=False), ["Partner"]), #2 values: Yes, No
-            (FunctionTransformer(lambda x: (x == 'Yes').astype(int), validate=False),["Dependents"]), # 2 values: No, Yes
+            (FunctionTransformer(encode_yes, validate=False), ["Partner"]), #2 values: Yes, No
+            (FunctionTransformer(encode_yes, validate=False),["Dependents"]), # 2 values: No, Yes
             (StandardScaler(),["tenure"]), # 73 int64 values.
-            (FunctionTransformer(lambda x: (x == 'Yes').astype(int), validate=False),["PhoneService"]), # 2 values: No, Yes
+            (FunctionTransformer(encode_yes, validate=False),["PhoneService"]), # 2 values: No, Yes
             (OneHotEncoder(),["MultipleLines"]), # 3 values: No phone service, No, Yes
             (OneHotEncoder(),["InternetService"]), # 3 values: DSL, Fiber optic, No
             (OneHotEncoder(),["OnlineSecurity"]), #  3 values: No, Yes, No internet service
@@ -42,15 +49,15 @@ def create_preprocessor() -> Pipeline :
             (OneHotEncoder(),["StreamingTV"]), # 3 values: No, Yes, No internet service
             (OneHotEncoder(),["StreamingMovies"]), # 3 values: No, Yes, No internet service
             (OneHotEncoder(),["Contract"]), # 3 values: Month-to-month, One year, Two year
-            (FunctionTransformer(lambda x: (x == 'Yes').astype(int), validate=False),["PaperlessBilling"]), # 2 values: Yes, No
+            (FunctionTransformer(encode_yes, validate=False),["PaperlessBilling"]), # 2 values: Yes, No
             (OneHotEncoder(),["PaymentMethod"]), # 4 values: Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)
             (StandardScaler(), ["MonthlyCharges"]), # 1585 float64 values.
             (make_pipeline(
-                FunctionTransformer(exclude_spaces(column_name="TotalCharges"), validate=False),
+                FunctionTransformer(exclude_spaces_from_totalCharges, validate=False),
                 StandardScaler()
                 ), ["TotalCharges"]), # 6531 values.
             
-            #(FunctionTransformer(lambda x: (x == 'Yes').astype(int), validate=False), ["Churn"]), #, 2 values: No, Yes
+            #(FunctionTransformer(encode_yes, validate=False), ["Churn"]), #, 2 values: No, Yes
             remainder='passthrough'
 
         )

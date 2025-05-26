@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: churnprediction
+Version: 0.1.0
+Summary: Package for churn prediction
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: tensorflow
+Requires-Dist: tensorflow-cpu
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: scikit-learn
+Requires-Dist: xgboost
+Requires-Dist: shap
+Requires-Dist: keras_tuner
+Requires-Dist: tensorboard
+
+# if use develop_nico :
+# install vscode add on "Even Better Toml"
+pip install -e .
